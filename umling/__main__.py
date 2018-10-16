@@ -22,10 +22,20 @@
 This is the main umling file. It will initialize, run and manage the whole of umling.
 """
 
+import sys
+
+from PyQt5.QtWidgets import QApplication, QWidget
+
 
 def main() -> None:
     """Start the application."""
     print("Hello World")
+    app = QApplication(sys.argv)
+
+    w = QWidget()
+    w.setWindowTitle('Hi')
+    w.show()
+    sys.exit(app.exec_())
     pass
 
 

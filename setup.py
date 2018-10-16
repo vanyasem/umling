@@ -16,6 +16,10 @@ setuptools.setup(
     url="https://github.com/vanyasem/umling",
     license='GPLv3+',
     packages=setuptools.find_packages(),
+    install_requires=[
+        'pymorphy2==0.8',
+        'pyqt5==5.10.1',
+    ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
     classifiers=[
