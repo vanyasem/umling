@@ -3,6 +3,7 @@ sudo: required
 dist: xenial
 python:
 - '3.7'
+install: python setup.py develop
 deploy:
   provider: pypi
   user: vanyasem
