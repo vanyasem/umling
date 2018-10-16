@@ -4,6 +4,7 @@ dist: xenial
 python:
 - '3.7'
 install: python setup.py develop
+script: python setup.py pytest
 deploy:
   provider: pypi
   user: vanyasem

@@ -16,6 +16,8 @@ setuptools.setup(
     url="https://github.com/vanyasem/umling",
     license='GPLv3+',
     packages=setuptools.find_packages(),
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Information Technology",
