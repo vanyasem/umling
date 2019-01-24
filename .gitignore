@@ -1,3 +1,11 @@
 venv/
 *.egg-info/
 .eggs/
+*cpython*
+
+.idea/
+
+config.py
+
+build/
+dist/

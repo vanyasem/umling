@@ -5,12 +5,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setuptools.setup(
+setuptools.setup( # TODO .ico
     name="umling",
     version="0.0.1",
     author="Ivan Semkin",
     author_email="ivan@semkin.ru",
-    description="",  # TODO
+    description="Interactively generate Use-Case UML diagrams",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/vanyasem/umling",
@@ -18,7 +18,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'pymorphy2==0.8',
-        'pyqt5==5.10.1',
+        'pydot==1.4.1',
+        'python-telegram-bot==11.1.0',
+        'cefpython3==66.0'
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

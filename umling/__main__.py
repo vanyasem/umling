@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2018 Ivan Semkin.
+# Copyright (c) 2019 Ivan Semkin.
 #
 # This file is part of umling
 #
@@ -22,22 +22,45 @@
 This is the main umling file. It will initialize, run and manage the whole of umling.
 """
 
+import getopt
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget
+from umling.web import server
+from umling.web.cef import cef
 
 
-def main() -> None:
+def print_help() -> None:
+    print("""usage: umling.py [-h] [-t] [-w] [-c]
+
+optional arguments:
+  -h, --help            Show this help message and exit
+  -t, --telegram        Start a Telegram bot
+  -w, --web             Start a webserver at 127.0.0.1:8000
+  -c, --cef             Default, launch the webapp in a Chromium sandbox""")
+    pass
+
+
+def main(argv) -> None:
     """Start the application."""
-    print("Hello World")
-    app = QApplication(sys.argv)
+    try:
+        opts, args = getopt.getopt(argv, "htwc", ["help", "telegram", "web", "cef"])
+    except getopt.GetoptError:
+        print_help()
+        sys.exit(2)
 
-    w = QWidget()
-    w.setWindowTitle('Hi')
-    w.show()
-    sys.exit(app.exec_())
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print_help()
+            sys.exit()
+        elif opt in ("-t", "--telegram"):
+            sys.exit()  # TODO
+        elif opt in ("-w", "--web"):
+            server.main()
+            sys.exit()
+
+    cef.main()
     pass
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
