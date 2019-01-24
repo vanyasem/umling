@@ -5,7 +5,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setuptools.setup( # TODO .ico
+setuptools.setup(  # TODO .ico
     name="umling",
     version="0.0.1",
     author="Ivan Semkin",
@@ -22,8 +22,6 @@ setuptools.setup( # TODO .ico
         'python-telegram-bot==11.1.0',
         'cefpython3==66.0'
     ],
-    setup_requires=["pytest-runner"],
-    tests_require=["pytest"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Information Technology",
