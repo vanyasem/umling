@@ -20,32 +20,42 @@
 """
 This is the CEF (embedded browser) component of umling.
 """
-
+import os
 import platform
 import sys
-import threading
 
 from cefpython3 import cefpython as cef
 
-from umling.web import server
+Browser = None
 
 
-def main():
+def main() -> None:
+    global Browser
     check_versions()
-
-    thread = threading.Thread(target=server.main, args=())
-    thread.daemon = True
-    thread.start()
 
     sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
     cef.Initialize()
-    cef.CreateBrowserSync(url="http://localhost:8000/",
-                          window_title="umling")
+    print(get_static_folder())
+    Browser = cef.CreateBrowserSync(url=get_static_folder(), window_title="umling")
+    Browser.SetClientHandler(LoadHandler())
+    bindings = cef.JavascriptBindings()
+    bindings.SetFunction("py_process_message", py_process_message)
+    Browser.SetJavascriptBindings(bindings)
     cef.MessageLoop()
     cef.Shutdown()
 
 
-def check_versions():
+class LoadHandler(object):
+    def OnLoadEnd(self, browser, **_):
+        browser.ExecuteFunction("message", "Привет! Меня зовут umling")
+
+
+def py_process_message(msg) -> None:
+    global Browser
+    Browser.ExecuteFunction("message", "echo " + msg)
+
+
+def check_versions() -> None:
     ver = cef.GetVersion()
     print("[cef.py] CEF Python {ver}".format(ver=ver["version"]))
     print("[cef.py] Chromium {ver}".format(ver=ver["chrome_version"]))
@@ -54,6 +64,12 @@ def check_versions():
            ver=platform.python_version(),
            arch=platform.architecture()[0]))
     assert cef.__version__ >= "57.0", "CEF Python v57.0+ required to run this"
+
+
+def get_static_folder() -> str:
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.split(os.path.split(os.path.split(path)[0])[0])[0]
+    return os.path.join(path, 'static', 'index.html')
 
 
 if __name__ == '__main__':
