@@ -10,7 +10,7 @@ block_cipher = None
 
 a = Analysis(['umling\\__main__.py'],
              pathex=['C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x64', 'C:\\Users\\vanya\\AppData\\Roaming\\Python\\Python37\\site-packages', 'D:\\Projects\\Python\\_umling'],
-             datas=[ ( 'static\\*', 'static' )],
+             datas=[ ( 'umling\\static\\*.js', 'static' ), ( 'umling\\static\\*.css', 'static' ), ( 'umling\\static\\*.html', 'static' )],
              hookspath=['.'],
              excludes=[ 'telegram' ],
              win_no_prefer_redirects=True,
@@ -30,7 +30,7 @@ exe = EXE(pyz,
           strip=False,
           upx=False,
           console=debug,
-          icon='static/favicon.ico',
+          icon='umling/static/favicon.ico',
           version='version.txt')
 
 coll = COLLECT(exe,

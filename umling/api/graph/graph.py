@@ -52,7 +52,9 @@ def main():
     graph.add_edge(pydot.Edge(node_c, node_d))
     graph.add_edge(pydot.Edge(node_d, node_a, label="test5", labelfontcolor="#009933", fontsize="10.0", color="blue"))
 
-    graph.write_png('static\\graphs\\graph.png', encoding='utf-8')
+    if not os.path.exists('static' + os.sep + 'graphs'):
+        os.makedirs('static' + os.sep + 'graphs')
+    graph.write_png('static' + os.sep + 'graphs' + os.sep + 'graph.png', encoding='utf-8')
     pass
 
 

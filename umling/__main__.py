@@ -23,6 +23,7 @@ This is the main umling file. It will initialize, run and manage the whole of um
 """
 
 import getopt
+import os
 import sys
 
 from umling.cef import cef
@@ -41,6 +42,10 @@ optional arguments:
 
 def main(argv) -> None:
     """Start the application."""
+    sep = os.sep
+    os.chdir(sep.join(os.path.realpath((sys.argv[0])).split(os.sep)[0:-1]))
+    # os.path.split refuses to work with PyInstaller
+
     try:
         opts, args = getopt.getopt(argv, "htwc", ["help", "telegram", "web", "cef"])
     except getopt.GetoptError:

@@ -22,6 +22,7 @@ This is the Telegram component of umling.
 """
 
 import logging
+import os
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -43,7 +44,7 @@ def start(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    with open('D:\\Pictures\\6VVzJ1jlPZ8.jpg', 'rb') as file:  # todo file path
+    with open('static' + os.sep + 'graphs' + os.sep + 'graph.png', 'rb') as file:
         update.message.reply_photo(file)
 
 

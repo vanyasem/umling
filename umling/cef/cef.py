@@ -25,6 +25,7 @@ import platform
 import sys
 
 from cefpython3 import cefpython as cef
+from umling.api.graph import graph
 
 Browser = None
 
@@ -33,9 +34,10 @@ def main() -> None:
     global Browser
     check_versions()
 
+    graph.main()
+
     sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
     cef.Initialize()
-    print(get_static_folder())
     Browser = cef.CreateBrowserSync(url=get_static_folder(), window_title="umling")
     Browser.SetClientHandler(LoadHandler())
     bindings = cef.JavascriptBindings()
@@ -53,7 +55,7 @@ class LoadHandler(object):
 def py_process_message(msg) -> None:
     global Browser
     Browser.ExecuteFunction("message", "hi " + msg)
-    Browser.ExecuteFunction("picture", "graphs\\graph.png", "Title", "Desc")
+    Browser.ExecuteFunction("picture", "graphs" + os.sep + "graph.png", "Title", "Desc")
 
 
 def check_versions() -> None:
@@ -68,9 +70,7 @@ def check_versions() -> None:
 
 
 def get_static_folder() -> str:
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.split(os.path.split(path)[0])[0]
-    return os.path.join(path, 'static', 'index.html')
+    return os.getcwd() + os.sep + "static" + os.sep + "index.html"
 
 
 if __name__ == '__main__':
