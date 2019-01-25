@@ -57,6 +57,11 @@ Chat
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  transition: all .6s ease-in-out;
+}
+.chat.pop {
+  -webkit-filter: blur(10px);
+          filter: blur(10px);
 }
 
 /*--------------------

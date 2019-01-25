@@ -52,7 +52,8 @@ class LoadHandler(object):
 
 def py_process_message(msg) -> None:
     global Browser
-    Browser.ExecuteFunction("message", "echo " + msg)
+    Browser.ExecuteFunction("message", "hi " + msg)
+    Browser.ExecuteFunction("picture", "D:\\Pictures\\6VVzJ1jlPZ8.jpg", "Title", "Desc")
 
 
 def check_versions() -> None:

@@ -4,7 +4,41 @@ var $messages = $('.messages-content'),
 
 $(window).load(function() {
   $messages.mCustomScrollbar();
+  popup.init();
 });
+
+popup = {
+  init: function(){
+    $(document).on('click', '.gal', function(){
+      popup.open($(this));
+    }).on('click', '.popup img', function(){
+      return false;
+    }).on('click', '.popup', function(){
+      popup.close();
+    })
+  },
+  open: function($figure) {
+    $('.chat').addClass('pop');
+    $popup = $('<div class="popup" />').appendTo($('body'));
+    $fig = $figure.clone().appendTo($('.popup'));
+    $bg = $('<div class="bg" />').appendTo($('.popup'));
+    $close = $('<div class="close"><svg><use xlink:href="#close"></use></svg></div>').appendTo($fig);
+    $shadow = $('<div class="shadow" />').appendTo($fig);
+    src = $('img', $fig).attr('src');
+    $shadow.css({backgroundImage: 'url(' + src + ')'});
+    $bg.css({backgroundImage: 'url(' + src + ')'});
+    setTimeout(function(){
+      $('.popup').addClass('pop');
+    }, 10);
+  },
+  close: function(){
+    $('.chat, .popup').removeClass('pop');
+    setTimeout(function(){
+      $('.popup').remove()
+    }, 100);
+  }
+}
+
 
 function updateScrollbar() {
   $messages.mCustomScrollbar("update").mCustomScrollbar('scrollTo', 'bottom', {
@@ -54,6 +88,22 @@ function message(text) {
   setTimeout(function() {
     $('.message.loading').remove();
     $('<div class="message new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure>' + text + '</div>').appendTo($('.mCSB_container')).addClass('new');
+    setDate();
+    updateScrollbar();
+    i++;
+  }, 1000 + (Math.random() * 20) * 100);
+}
+
+function picture(path, title, desc) {
+  if ($('.message-input').val() != '') {
+    return false;
+  }
+  $('<div class="message loading new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+  updateScrollbar();
+
+  setTimeout(function() {
+    $('.message.loading').remove();
+    $('<div class="message new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure><div class="gallery"><figure class="gal"> <img src="' + path + '" alt="" /> <figcaption>' + title +'<small>' + desc +'</small></figcaption></div> </figure></div>').appendTo($('.mCSB_container')).addClass('new');
     setDate();
     updateScrollbar();
     i++;
