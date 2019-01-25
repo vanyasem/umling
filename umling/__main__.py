@@ -25,7 +25,6 @@ This is the main umling file. It will initialize, run and manage the whole of um
 import getopt
 import sys
 
-from umling.web import server
 from umling.web.cef import cef
 
 
@@ -53,8 +52,11 @@ def main(argv) -> None:
             print_help()
             sys.exit()
         elif opt in ("-t", "--telegram"):
-            sys.exit()  # TODO
+            from umling.telegram import telegram
+            telegram.main()
+            sys.exit()
         elif opt in ("-w", "--web"):
+            from umling.web import server
             server.main()
             sys.exit()
 
