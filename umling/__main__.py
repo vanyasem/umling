@@ -25,7 +25,7 @@ This is the main umling file. It will initialize, run and manage the whole of um
 import getopt
 import sys
 
-from umling.web.cef import cef
+from umling.cef import cef
 
 
 def print_help() -> None:

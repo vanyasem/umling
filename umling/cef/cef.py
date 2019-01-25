@@ -69,7 +69,7 @@ def check_versions() -> None:
 
 def get_static_folder() -> str:
     path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.split(os.path.split(os.path.split(path)[0])[0])[0]
+    path = os.path.split(os.path.split(path)[0])[0]
     return os.path.join(path, 'static', 'index.html')
 
 

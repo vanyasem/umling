@@ -1,8 +1,22 @@
 var $messages = $('.messages-content'),
-    d, h, m,
-    i = 0;
+  d, h, m,
+  i = 0;
 
 $(window).load(function() {
+  if(typeof py_process_message === 'undefined') {
+    py_process_message = function(msg) {
+      $.ajax({
+        type: "POST",
+        url: "cgi-bin/process.py",
+        data: { text: msg}
+      }).done(function( o ) {
+         message( o );
+         picture("6VVzJ1jlPZ8.jpg", "Title", "Desc");
+      });
+    }
+    py_process_message("testing");
+  }
+
   $messages.mCustomScrollbar();
   popup.init();
 });
