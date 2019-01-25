@@ -11,7 +11,7 @@ $(window).load(function() {
         data: { text: msg}
       }).done(function( o ) {
          message( o );
-         picture("6VVzJ1jlPZ8.jpg", "Title", "Desc");
+         picture("graphs/graph.png", "Title", "Desc");
       });
     }
     py_process_message("testing");

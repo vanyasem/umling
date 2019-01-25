@@ -17,14 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import cgi
+"""
+This is the API (main logic) of umling.
+"""
 
-# Create instance of FieldStorage
-form = cgi.FieldStorage()
+from umling.api.graph import graph
 
-# Get data from fields
-text = form.getvalue('text')
 
-print('Content-type: text/html')
-print()
-print("hi " + text)
+def main():
+    graph.main()
+    pass
+
+
+if __name__ == '__main__':
+    main()
