@@ -21,11 +21,13 @@
 
 This is the main umling file. It will initialize, run and manage the whole of umling.
 """
-
+import datetime
 import getopt
+import logging
 import os
 import sys
 
+from umling import config
 from umling.cef import cef
 
 
@@ -40,11 +42,24 @@ optional arguments:
     pass
 
 
-def main(argv) -> None:
-    """Start the application."""
+def cd_to_work_dir():
     sep = os.sep
     os.chdir(sep.join(os.path.realpath((sys.argv[0])).split(os.sep)[0:-1]))
     # os.path.split refuses to work with PyInstaller
+
+
+def init_logging():
+    if not os.path.exists(config.LOG_PATH):
+        os.makedirs(config.LOG_PATH)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    path = config.LOG_PATH + timestamp + "." + config.LOG_LEVEL + '.log'
+    logging.basicConfig(filename=path, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+
+
+def main(argv) -> None:
+    """Start the application."""
+    cd_to_work_dir()
+    init_logging()
 
     try:
         opts, args = getopt.getopt(argv, "htwc", ["help", "telegram", "web", "cef"])

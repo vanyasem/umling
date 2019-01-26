@@ -18,3 +18,6 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 TELEGRAM_KEY = "INSERT YOUR KEY"
+
+LOG_LEVEL = 'warning'
+LOG_PATH = '../log/'
