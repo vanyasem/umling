@@ -20,4 +20,4 @@
 TELEGRAM_KEY = "INSERT YOUR KEY"
 
 LOG_LEVEL = 'warning'
-LOG_PATH = '../log/'
+LOG_PATH = 'log/'

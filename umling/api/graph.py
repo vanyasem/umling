@@ -20,12 +20,13 @@
 """
 This is the graph generation logic of umling.
 """
+import os
+
 import pydot
 
 
 def main():
-    import os
-    os.environ["PATH"] += os.pathsep + 'C:\\Utils\\graphviz-2.38\\bin'
+    os.environ["PATH"] += os.pathsep + os.getcwd() + os.sep + 'graphviz' + os.sep + 'bin'
 
     # a DIrected GRAPH
     graph = pydot.Dot(graph_type='digraph')
