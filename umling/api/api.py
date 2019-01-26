@@ -21,9 +21,19 @@
 This is the API (main logic) of umling.
 """
 
+from umling.api import sql
 from umling.api import graph
 
 
-def main():
-    graph.main()
+def handle_query(user_id, query):
+    if query is None:
+        return "Привет! Меня зовут umling"
+    else:
+        return "hi " + user_id + " " + query
+    pass
+
+
+def init():
+    sql.init()
+    # graph.main()
     pass

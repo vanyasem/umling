@@ -25,7 +25,9 @@ import platform
 import sys
 
 from cefpython3 import cefpython as cef
-from umling.api import graph
+
+from umling import config
+from umling.api import api
 
 Browser = None
 
@@ -33,8 +35,6 @@ Browser = None
 def init() -> None:
     global Browser
     check_versions()
-
-    graph.main()
 
     sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
     cef.Initialize()
@@ -49,12 +49,14 @@ def init() -> None:
 
 class LoadHandler(object):
     def OnLoadEnd(self, browser, **_):
-        browser.ExecuteFunction("message", "Привет! Меня зовут umling")
+        result = api.handle_query(config.CEF_USER_ID, None)
+        browser.ExecuteFunction("message", result)
 
 
 def py_process_message(msg) -> None:
     global Browser
-    Browser.ExecuteFunction("message", "hi " + msg)
+    result = api.handle_query(config.CEF_USER_ID, msg)
+    Browser.ExecuteFunction("message", result)
     Browser.ExecuteFunction("picture", "graphs" + os.sep + "graph.png", "Title", "Desc")
 
 

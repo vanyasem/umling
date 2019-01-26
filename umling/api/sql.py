@@ -16,11 +16,41 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+import os
 
-TELEGRAM_KEY = "INSERT YOUR KEY"
+from peewee import *
+from umling import config
 
-LOG_LEVEL = 'warning'  # [ debug, info, warning, error, critical ]
-LOG_PATH = 'log/'
+db = SqliteDatabase(config.DATA_PATH + 'umling.db')
 
-DATA_PATH = 'data/'
-CEF_USER_ID = "cef"
+
+class User(Model):
+    user_id = CharField()
+
+    class Meta:
+        database = db
+
+
+class Data(Model):
+    actors = []
+    use_cases = []
+
+    class Meta:
+        database = db
+
+
+def save_user(user_id):
+    test_user = User(user_id=user_id)
+    test_user.save()
+
+
+def init():
+    if not os.path.exists(config.DATA_PATH):
+        os.makedirs(config.DATA_PATH)
+
+    db.connect()
+    db.create_tables([User])
+
+    save_user("cef2")
+    save_user("cef3")
+

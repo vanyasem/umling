@@ -20,7 +20,8 @@ setuptools.setup(
         'pymorphy2==0.8',
         'pydot==1.4.1',
         'python-telegram-bot==11.1.0',
-        'cefpython3==66.0'
+        'cefpython3==66.0',
+        'peewee==3.8.2'
     ],
     classifiers=[
         "Development Status :: 1 - Planning",

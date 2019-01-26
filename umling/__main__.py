@@ -29,6 +29,7 @@ import sys
 
 from umling import config
 from umling.cef import cef
+from umling.api import api
 
 
 def print_help() -> None:
@@ -58,14 +59,15 @@ def init_logging():
 
 def main(argv) -> None:
     """Start the application."""
-    cd_to_work_dir()
-    init_logging()
-
     try:
         opts, args = getopt.getopt(argv, "htwc", ["help", "telegram", "web", "cef"])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
+
+    cd_to_work_dir()
+    init_logging()
+    api.init()
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):

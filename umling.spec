@@ -8,12 +8,16 @@ debug = False
 
 block_cipher = None
 
+UCRT_PATH = 'C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x64'
+PYTHON_PATH = 'C:\\Users\\vanya\\AppData\\Roaming\\Python\\Python37\\site-packages'
+GRAPHVIZ_PATH = 'C:\\Utils\\graphviz-2.38'
+
 a = Analysis(['umling\\__main__.py'],
-             pathex=['C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x64', 'C:\\Users\\vanya\\AppData\\Roaming\\Python\\Python37\\site-packages', 'D:\\Projects\\Python\\_umling'],
+             pathex=[UCRT_PATH, PYTHON_PATH],
              datas=[
              ( 'umling\\static\\*.js', 'static' ), ( 'umling\\static\\*.css', 'static' ), ( 'umling\\static\\*.html', 'static' ), ( 'umling\\static\\*.ico', 'static' ),
              ( 'umling\\static\\cdn\\*.js', 'static\\cdn' ), ( 'umling\\static\\cdn\\*.css', 'static\\cdn' ),
-             ( 'C:\\Utils\\graphviz-2.38', 'graphviz' ),
+             ( GRAPHVIZ_PATH, 'graphviz' ),
              ],
              hookspath=['.'],
              excludes=[ 'telegram' ],

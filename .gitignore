@@ -2,13 +2,14 @@ venv/
 *.egg-info/
 .eggs/
 *cpython*
-*.log
 *.pyc
-graph*.png
 
 .idea/
 
 config.py
+data/
+graph*.png
+*.log
 
 build/
 dist/
