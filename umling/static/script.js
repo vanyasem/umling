@@ -96,12 +96,12 @@ function message(text) {
   if ($('.message-input').val() != '') {
     return false;
   }
-  $('<div class="message loading new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+  $('<div class="message loading new"><figure class="avatar"><img src="favicon.ico" /></figure><span></span></div>').appendTo($('.mCSB_container'));
   updateScrollbar();
 
   setTimeout(function() {
     $('.message.loading').remove();
-    $('<div class="message new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure>' + text + '</div>').appendTo($('.mCSB_container')).addClass('new');
+    $('<div class="message new"><figure class="avatar"><img src="favicon.ico" /></figure>' + text + '</div>').appendTo($('.mCSB_container')).addClass('new');
     setDate();
     updateScrollbar();
     i++;
@@ -112,12 +112,12 @@ function picture(path, title, desc) {
   if ($('.message-input').val() != '') {
     return false;
   }
-  $('<div class="message loading new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+  $('<div class="message loading new"><figure class="avatar"><img src="favicon.ico" /></figure><span></span></div>').appendTo($('.mCSB_container'));
   updateScrollbar();
 
   setTimeout(function() {
     $('.message.loading').remove();
-    $('<div class="message new"><figure class="avatar"><img src="https://avatars0.githubusercontent.com/u/13350458" /></figure><div class="gallery"><figure class="gal"> <img src="' + path + '" alt="" /> <figcaption>' + title +'<small>' + desc +'</small></figcaption></div> </figure></div>').appendTo($('.mCSB_container')).addClass('new');
+    $('<div class="message new"><figure class="avatar"><img src="favicon.ico" /></figure><div class="gallery"><figure class="gal"> <img src="' + path + '" alt="" /> <figcaption>' + title +'<small>' + desc +'</small></figcaption></div> </figure></div>').appendTo($('.mCSB_container')).addClass('new');
     setDate();
     updateScrollbar();
     i++;
