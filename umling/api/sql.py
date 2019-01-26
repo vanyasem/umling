@@ -25,6 +25,11 @@ db = SqliteDatabase(config.DATA_PATH + 'umling.db')
 LEVEL_ACTOR = 0
 LEVEL_USE_CASE = 1
 
+STATE_NONE = 0
+STATE_ACTORS = 1
+STATE_USE_CASES = 2
+STATE_RELATIONS = 3
+
 
 class UmlingModel(Model):
     class Meta:
@@ -33,6 +38,7 @@ class UmlingModel(Model):
 
 class User(UmlingModel):
     user_id = CharField()
+    state = SmallIntegerField()
 
 
 class Graph(UmlingModel):
@@ -56,7 +62,7 @@ class Relationship(UmlingModel):
 
 
 def populate_test_data():
-    test_user = User(user_id="Test user")
+    test_user = User(user_id="Test user", state=STATE_NONE)
     test_user.save()
 
     test_graph = Graph(user=test_user, name="Test graph", description="This graph is intended for testing")
@@ -72,9 +78,30 @@ def populate_test_data():
     test_relationship.save()
 
 
+def get_user_pk(user_id):
+    user = User.get(User.user_id == user_id)
+    return user.get_id()
+
+
+def get_current_graph(user_id):
+    user_pk = get_user_pk(user_id)
+    graph = Graph.select().where(Graph.user == user_pk).limit(1)
+    return graph[0]
+
+
+def get_graph_nodes(graph_pk):
+    return Node.select().where(Node.graph == graph_pk)
+
+
+def get_relations(graph_pk):
+    return Relationship.select().join(Node, on=(Relationship.start_node == Node.id)).where(Node.graph == graph_pk)
+
+
 def init():
     if not os.path.exists(config.DATA_PATH):
         os.makedirs(config.DATA_PATH)
 
     db.connect()
     db.create_tables([User, Graph, Node, Relationship])
+
+    populate_test_data()

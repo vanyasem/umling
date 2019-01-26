@@ -24,36 +24,42 @@ import os
 
 import pydot
 
+from umling.api import sql
+
+
+def determine_color(level):
+    if level == sql.LEVEL_ACTOR:
+        return "red"
+    elif level == sql.LEVEL_USE_CASE:
+        return "blue"
 
 def main():
     os.environ["PATH"] += os.pathsep + os.getcwd() + os.sep + 'graphviz' + os.sep + 'bin'
 
     # a DIrected GRAPH
-    graph = pydot.Dot(graph_type='digraph')
+    pydot_graph = pydot.Dot(graph_type='digraph')
 
-    # creating nodes
-    node_a = pydot.Node("test1", style="filled", fillcolor="red")
+    graph = sql.get_current_graph("Test user")
+    nodes = sql.get_graph_nodes(graph.get_id())
+    pydot_nodes = {}
+    for node in nodes:
+        pydot_node = pydot.Node(node.name, style="filled", fillcolor=determine_color(node.level))
+        pydot_nodes[node.get_id()] = pydot_node
+        pydot_graph.add_node(pydot_node)
+
     # full reference here:
     # http://www.graphviz.org/doc/info/attrs.html
     # which in turn is part of the full docs in
     # http://www.graphviz.org/Documentation.php
-    node_b = pydot.Node("test2", style="filled", fillcolor="green")
-    node_c = pydot.Node("test3", style="filled", fillcolor="#0000ff")
-    node_d = pydot.Node("test4", style="filled", fillcolor="#976856")
 
-    # add the nodes to the graph
-    graph.add_node(node_a)
-    graph.add_node(node_b)
-    graph.add_node(node_c)
-    graph.add_node(node_d)
-
-    # create the edges
-    graph.add_edge(pydot.Edge(node_a, node_b))
-    graph.add_edge(pydot.Edge(node_b, node_c))
-    graph.add_edge(pydot.Edge(node_c, node_d))
-    graph.add_edge(pydot.Edge(node_d, node_a, label="test5", labelfontcolor="#009933", fontsize="10.0", color="blue"))
+    relations = sql.get_relations(graph.get_id())
+    for relation in relations:
+        start_node = pydot_nodes[relation.start_node.get_id()]
+        end_node = pydot_nodes[relation.end_node.get_id()]
+        pydot_graph.add_edge(pydot.Edge(start_node, end_node, label=relation.name))
+    # pydot_graph.add_edge(pydot.Edge(node_d, node_a, label="test5", labelfontcolor="#009933", fontsize="10.0", color="blue"))
 
     if not os.path.exists('static' + os.sep + 'graphs'):
         os.makedirs('static' + os.sep + 'graphs')
-    graph.write_png('static' + os.sep + 'graphs' + os.sep + 'graph.png', encoding='utf-8')
+    pydot_graph.write_png('static' + os.sep + 'graphs' + os.sep + str(graph.get_id()) + '.png', encoding='utf-8')
     pass

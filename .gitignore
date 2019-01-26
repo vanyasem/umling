@@ -8,7 +8,7 @@ venv/
 
 config.py
 data/
-graph*.png
+graphs/
 *.log
 
 build/
