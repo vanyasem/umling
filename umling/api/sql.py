@@ -22,26 +22,54 @@ from peewee import *
 from umling import config
 
 db = SqliteDatabase(config.DATA_PATH + 'umling.db')
+LEVEL_ACTOR = 0
+LEVEL_USE_CASE = 1
 
 
-class User(Model):
+class UmlingModel(Model):
+    class Meta:
+        database = db
+
+
+class User(UmlingModel):
     user_id = CharField()
 
-    class Meta:
-        database = db
+
+class Graph(UmlingModel):
+    user = ForeignKeyField(User, backref='graphs')
+    name = CharField()
+    description = CharField()
 
 
-class Data(Model):
-    actors = []
-    use_cases = []
+class Node(UmlingModel):
+    graph = ForeignKeyField(Graph, backref='nodes')
+    level = SmallIntegerField()
+    name = CharField()
+    description = CharField()
 
-    class Meta:
-        database = db
+
+class Relationship(UmlingModel):
+    start_node = ForeignKeyField(Node, backref='relationships')
+    end_node = ForeignKeyField(Node, backref='relationships')
+    name = CharField()  # TODO Probably worth converting to SmallIntegerField, as this will enum include / extend
+    direction = BooleanField()
 
 
-def save_user(user_id):
-    test_user = User(user_id=user_id)
+def populate_test_data():
+    test_user = User(user_id="Test user")
     test_user.save()
+
+    test_graph = Graph(user=test_user, name="Test graph", description="This graph is intended for testing")
+    test_graph.save()
+
+    test_node1 = Node(graph=test_graph, level=LEVEL_ACTOR, name="Test node 1", description="First node intended for testing")
+    test_node1.save()
+
+    test_node2 = Node(graph=test_graph, level=LEVEL_USE_CASE, name="Test node 2", description="Second node intended for testing")
+    test_node2.save()
+
+    test_relationship = Relationship(start_node=test_node1, end_node=test_node2, name="Test relationship", direction=False)
+    test_relationship.save()
 
 
 def init():
@@ -49,8 +77,4 @@ def init():
         os.makedirs(config.DATA_PATH)
 
     db.connect()
-    db.create_tables([User])
-
-    save_user("cef2")
-    save_user("cef3")
-
+    db.create_tables([User, Graph, Node, Relationship])

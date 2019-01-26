@@ -37,7 +37,11 @@ def init() -> None:
     check_versions()
 
     sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
-    cef.Initialize()
+    settings = {
+        "log_severity": cef.LOGSEVERITY_WARNING,
+        "log_file": config.LOG_PATH + "cef" + '.log',
+    }
+    cef.Initialize(settings=settings)
     Browser = cef.CreateBrowserSync(url=get_static_folder(), window_title="umling")
     Browser.SetClientHandler(LoadHandler())
     bindings = cef.JavascriptBindings()
