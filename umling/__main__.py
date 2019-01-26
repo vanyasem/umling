@@ -58,14 +58,14 @@ def main(argv) -> None:
             sys.exit()
         elif opt in ("-t", "--telegram"):
             from umling.telegram import telegram
-            telegram.main()
+            telegram.init()
             sys.exit()
         elif opt in ("-w", "--web"):
             from umling.web import server
-            server.main()
+            server.init()
             sys.exit()
 
-    cef.main()
+    cef.init()
     pass
 
 

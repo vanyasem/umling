@@ -56,7 +56,3 @@ def main():
         os.makedirs('static' + os.sep + 'graphs')
     graph.write_png('static' + os.sep + 'graphs' + os.sep + 'graph.png', encoding='utf-8')
     pass
-
-
-if __name__ == '__main__':
-    main()

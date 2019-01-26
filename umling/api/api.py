@@ -21,13 +21,9 @@
 This is the API (main logic) of umling.
 """
 
-from umling.api.graph import graph
+from umling.api import graph
 
 
 def main():
     graph.main()
     pass
-
-
-if __name__ == '__main__':
-    main()

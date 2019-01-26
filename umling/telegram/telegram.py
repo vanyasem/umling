@@ -26,7 +26,7 @@ import os
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-from umling.telegram import config
+from umling import config
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -48,7 +48,7 @@ def help(bot, update):
         update.message.reply_photo(file)
 
 
-def echo(bot, update):
+def message(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
 
@@ -58,7 +58,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
-def main():
+def init():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
     updater = Updater(config.TELEGRAM_KEY)
@@ -71,7 +71,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
 
     # on non-command i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    dp.add_handler(MessageHandler(Filters.text, message))
 
     # log all errors
     dp.add_error_handler(error)
@@ -81,4 +81,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    init()

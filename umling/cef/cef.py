@@ -25,12 +25,12 @@ import platform
 import sys
 
 from cefpython3 import cefpython as cef
-from umling.api.graph import graph
+from umling.api import graph
 
 Browser = None
 
 
-def main() -> None:
+def init() -> None:
     global Browser
     check_versions()
 
@@ -74,4 +74,4 @@ def get_static_folder() -> str:
 
 
 if __name__ == '__main__':
-    main()
+    init()
