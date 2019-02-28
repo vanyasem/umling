@@ -92,7 +92,7 @@ $(window).on('keydown', function(e) {
   }
 })
 
-function message(text) {
+function message(text, shortcuts) {
   if ($('.message-input').val() != '') {
     return false;
   }
@@ -101,7 +101,15 @@ function message(text) {
 
   setTimeout(function() {
     $('.message.loading').remove();
-    $('<div class="message new"><figure class="avatar"><img src="favicon.ico" /></figure>' + text + '</div>').appendTo($('.mCSB_container')).addClass('new');
+    var chips = '';
+    if(shortcuts != null) {
+      chips += '<br>';
+      shortcuts.forEach(function(item, i, shortcuts) {
+        chips += '<div onClick="alert(\'Test\');" style="margin-top: 5px" class="chip teal darken-1 blue-grey-text text-lighten-4">' + item + '</div>';
+      });
+    }
+    $('<div class="message new"><figure class="avatar"><img src="favicon.ico" /></figure>' + text
+    + chips + '</div></div>').appendTo($('.mCSB_container')).addClass('new');
     setDate();
     updateScrollbar();
     i++;

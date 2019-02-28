@@ -54,14 +54,16 @@ def init() -> None:
 class LoadHandler(object):
     def OnLoadEnd(self, browser, **_):
         result = api.handle_query(config.CEF_USER_ID, None)
-        browser.ExecuteFunction("message", result)
+        browser.ExecuteFunction("message", result.message, result.shortcuts)
 
 
 def py_process_message(msg) -> None:
     global Browser
     result = api.handle_query(config.CEF_USER_ID, msg)
-    Browser.ExecuteFunction("message", result)
-    Browser.ExecuteFunction("picture", "graphs" + os.sep + "graph.png", "Title", "Desc")
+    if result.isFinal:
+        Browser.ExecuteFunction("picture", "graphs" + os.sep + "graph.png", "use-case", "Ваш use-case")
+    else:
+        Browser.ExecuteFunction("message", result.message, result.shortcuts)
 
 
 def check_versions() -> None:

@@ -36,12 +36,12 @@ class State:
 
 
 def random_confirmation_shortcut(is_positive):
-    if is_positive:
-        return random.choice(ShortcutsYes)
-    elif not is_positive:
-        return random.choice(ShortcutsNo)
-    else:
+    if is_positive is None:
         return [random.choice(ShortcutsYes), random.choice(ShortcutsNo)]
+    elif is_positive:
+        return [random.choice(ShortcutsYes)]
+    elif not is_positive:
+        return [random.choice(ShortcutsNo)]
 
 
 Positives = ["да", "конечно", "подтвердить", "согласный", "верно", "ок", "ok", "ага", "угу"]
