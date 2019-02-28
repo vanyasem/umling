@@ -71,7 +71,7 @@ StateUseCases = State(["Какие действия можно совершит�
 StateRelations = State(["Определите область доступа для каждого участника процесса. Например: ученик - выполнить задание. Участники: {}. Доступные действия: {}"], False, ShortcutsDone)
 StateSelection = State(["Что бы Вы хотели задать следующим шагом?"], False, Actions)
 StateEditSelection = State(["StateEditSelection"], False, Actions)  # TODO not implemented
-StateGraphDone = State(["StateGraphDone"], False, Actions)  # TODO not implemented
+StateGraphDone = State([""], False, None)  # TODO first show a message then the image
 
 States = {sql.STATE_GREETING: StateGreeting, sql.STATE_NAME: StateName, sql.STATE_CONFIRM_NAME: StateConfirmName,
           sql.STATE_GRAPH_NAME: StateGraphName, sql.STATE_GRAPH_DESCRIPTION: StateGraphDescription,

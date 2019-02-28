@@ -42,10 +42,14 @@ class Message:
         self.shortcuts = shortcuts
 
 
-def state_to_message(state, *args):
+def state_to_message(user_id, state, *args):
     db_state = database.States[state]
     response = random.choice(db_state.responses)
-    return Message(False, response.format(*args), db_state.shortcuts)
+    if state == sql.STATE_GRAPH_DONE:
+        final_graph = sql.get_current_graph(user_id)
+        return Message(True, final_graph.name, [final_graph.description, ])
+    else:
+        return Message(False, response.format(*args), db_state.shortcuts)
 
 
 def get_or_create_user(user_id):
@@ -95,10 +99,10 @@ def write_graph_data(user_id, query, state):
     data = parse_list(query)
     if state is sql.STATE_ACTORS:
         for actor in data:
-            sql.make_actor(user_id, actor.strip(), "description")  # TODO empty field
+            sql.make_actor(user_id, actor.strip(), "")  # TODO empty field
     elif state is sql.STATE_USE_CASES:
         for use_case in data:
-            sql.make_use_case(user_id, use_case.strip(), "description")  # TODO empty field
+            sql.make_use_case(user_id, use_case.strip(), "")  # TODO empty field
     elif state is sql.STATE_RELATIONS:
         for relation in data:
             rel = relation.strip().split('-')
@@ -107,14 +111,14 @@ def write_graph_data(user_id, query, state):
             use_case = sql.get_use_case_by_name(graph, rel[1].strip())
             if actor is None or use_case is None:
                 return None
-            sql.make_relation("name", actor, use_case)  # TODO empty field
+            sql.make_relation("", actor, use_case)  # TODO empty field
 
 
 def get_graph_nodes(user_id):
     graph = sql.get_current_graph(user_id)
     actors = sql.get_actors(graph.get_id())
     use_cases = sql.get_use_cases(graph.get_id())
-    return ([actor.name for actor in actors], [use_case.name for use_case in use_cases])
+    return (', '.join([actor.name for actor in actors]), ', '.join([use_case.name for use_case in use_cases]))
 
 
 def handle_state(user_id, state, query):
@@ -182,8 +186,7 @@ def handle_state(user_id, state, query):
                     args = get_graph_nodes(user_id)
     elif state == sql.STATE_GRAPH_DONE:
         graph.generate(user_id)
-        sql.set_state(user_id, sql.STATE_GRAPH_NAME)
-        pass
+        #sql.set_state(user_id, sql.STATE_GRAPH_NAME) TODO not implemented
 
     db_state = database.States[state]
     if db_state.requiresConfirmation:
@@ -192,7 +195,7 @@ def handle_state(user_id, state, query):
 
     logging.debug("{}, switching state to: {}".format(user_id, state))
     sql.set_state(user_id, state)
-    return state_to_message(state, *args)
+    return state_to_message(user_id, state, *args)
 
 
 def handle_query(user_id, query):
