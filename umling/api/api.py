@@ -22,6 +22,7 @@ This is the API (main logic) of umling.
 """
 
 import random
+import logging
 
 from umling.api import sql
 from umling.api import input
@@ -40,23 +41,51 @@ class Message:
 
 
 def state_to_message(state):
-    response = random.choice(state.responses)
-    return Message(False, response, state.shortcuts)
+    db_state = database.States[state]
+    response = random.choice(db_state.responses)
+    return Message(False, response, db_state.shortcuts)
 
 
-def handle_query(user_id, query):
+def get_or_create_user(user_id):
     user = sql.get_user(user_id)
     if user is None:
         sql.create_user(user_id)
         user = sql.get_user(user_id)
+    return user
 
-    state = database.States[user.state]
 
-    if state.requiresConfirmation:
+def check_positive(user_id, query):
+    return True
+
+
+def handle_state(user_id, state, query):
+    logging.debug("{}, current state: {}".format(user_id, state))
+    result = None
+    if sql.get_confirmation(user_id):
+        result = check_positive(user_id, query)
         pass
 
+    if state == sql.STATE_GREETING:
+        if result is True:
+            sql.set_confirmation(user_id, False)
+            state = sql.STATE_NAME
+    elif state == sql.STATE_NAME:
+        pass
+
+    db_state = database.States[state]
+    if db_state.requiresConfirmation:
+        logging.debug("{}, state {} requires confirmation".format(user_id, state))
+        sql.set_confirmation(user_id, True)
+
+    logging.debug("{}, switching state to: {}".format(user_id, state))
+    sql.set_state(user_id, state)
     return state_to_message(state)
-    pass
+
+
+def handle_query(user_id, query):
+    logging.info("{}, got input: {}".format(user_id, query))
+    user = get_or_create_user(user_id)
+    return handle_state(user_id, user.state, query)
 
 
 def init():
