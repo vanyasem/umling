@@ -64,6 +64,23 @@ def check_positive(query):
     return None
 
 
+def state_by_action(query, state):
+    normalized_query = input.process_input(query)
+    for item in normalized_query:
+        if item in database.ActionActors:
+            return sql.STATE_ACTORS
+        elif item in database.ActionUseCases:
+            return sql.STATE_USE_CASES
+    return state
+
+
+def load_query_if_saved(user_id, query):
+    if sql.get_user(user_id).query is not None \
+            and query is None:
+        return sql.get_user(user_id).query
+    return query
+
+
 def handle_state(user_id, state, query):
     logging.debug("{}, current state: {}".format(user_id, state))
     result = None
@@ -81,7 +98,6 @@ def handle_state(user_id, state, query):
             sql.set_name(user_id, query)
         state = sql.STATE_CONFIRM_NAME
         args = (sql.get_user(user_id).username, )
-        pass
     elif state == sql.STATE_CONFIRM_NAME:
         args = (sql.get_user(user_id).username, )
         if result is True:
@@ -89,6 +105,17 @@ def handle_state(user_id, state, query):
             state = sql.STATE_BASIC_SELECTION
         elif result is False:
             state = sql.STATE_NAME
+    elif state == sql.STATE_BASIC_SELECTION:
+        args = (sql.get_user(user_id).username, )
+        query = load_query_if_saved(user_id, query)
+        if sql.get_user(user_id).save_query is True:
+            sql.set_query(user_id, query)
+            state = state_by_action(query, state)
+        else:
+            sql.set_save_query(user_id, True)
+    elif state == sql.STATE_ACTORS:
+        pass
+    elif state == sql.STATE_USE_CASES:
         pass
 
     db_state = database.States[state]

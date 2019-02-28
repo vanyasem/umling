@@ -52,13 +52,20 @@ ShortcutsYes = ["Да"]
 ShortcutsNo = ["Нет"]
 
 Actions = ["Группы действующих лиц", "Варианты использования"]
+ActionActors = ["группа", "действующий", "лицо"]
+ActionUseCases = ["вариант", "использование"]
 
 StateGreeting = State(["Здравствуйте! Меня зовут umling, я помогу Вам создать use-case UML диаграмму по Вашему продукту. Вы готовы начать?"], True, random_confirmation_shortcut(True))
-StateName = State(["Отлично! Для начала, как я могу к Вам обращаться?"], False, None)
+StateName = State(["Для начала, как я могу к Вам обращаться?"], False, None)
 StateConfirmName = State(["Ваше имя: {}, верно?"], True, random_confirmation_shortcut(None))
 StateBasicSelection = State(["Очень приятно, {}! С чего бы вы хотели начать заполнение диаграммы?"], False, Actions)
+StateActors = State(["StateActors"], False, None)
+StateUseCases = State(["StateUseCases"], False, None)
+StateRelations = State(["StateRelations"], False, None)
 
 StateEditSelection = State([], False, Actions)
 
 States = {sql.STATE_GREETING: StateGreeting, sql.STATE_NAME: StateName, sql.STATE_CONFIRM_NAME: StateConfirmName,
-          sql.STATE_BASIC_SELECTION: StateBasicSelection, sql.STATE_EDIT_SELECTION: StateEditSelection, }
+          sql.STATE_BASIC_SELECTION: StateBasicSelection, sql.STATE_ACTORS: StateActors,
+          sql.STATE_USE_CASES: StateUseCases, sql.STATE_RELATIONS: StateRelations,
+          sql.STATE_EDIT_SELECTION: StateEditSelection, }
