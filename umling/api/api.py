@@ -54,15 +54,23 @@ def get_or_create_user(user_id):
     return user
 
 
-def check_positive(user_id, query):
-    return True
+def check_positive(query):
+    normalized_query = input.process_input(query)
+    print(normalized_query)
+    for item in normalized_query:
+        if item in database.Positives:
+            return True
+        elif item in database.Negatives:
+            return False
+    return None
 
 
 def handle_state(user_id, state, query):
     logging.debug("{}, current state: {}".format(user_id, state))
     result = None
     if sql.get_confirmation(user_id):
-        result = check_positive(user_id, query)
+        print(query)
+        result = check_positive(str(query))
         pass
 
     if state == sql.STATE_GREETING:

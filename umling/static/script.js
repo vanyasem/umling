@@ -74,6 +74,7 @@ function insertMessage() {
   if ($.trim(msg) == '') {
     return false;
   }
+  $('.chip').remove();
   py_process_message(msg);
   $('<div class="message message-personal">' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
   setDate();
@@ -95,7 +96,6 @@ $(window).on('keydown', function(e) {
 function processChip(text) {
   $('.message-input').val(text);
   insertMessage();
-  $('.chip').remove();
 }
 
 function message(text, shortcuts) {
