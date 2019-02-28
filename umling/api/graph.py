@@ -39,7 +39,7 @@ def main():
     # a DIrected GRAPH
     pydot_graph = pydot.Dot(graph_type='digraph')
 
-    graph = sql.get_current_graph("Test user")
+    graph = sql.get_current_graph(user_id)
     nodes = sql.get_graph_nodes(graph.get_id())
     pydot_nodes = {}
     for node in nodes:

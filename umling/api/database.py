@@ -24,6 +24,7 @@ This is the chat database for umling.
 import random
 from umling.api import sql
 
+
 class State:
     responses = None
     requiresConfirmation = None
@@ -46,7 +47,7 @@ def random_confirmation_shortcut(is_positive):
 
 Positives = ["да", "конечно", "подтвердить", "согласный", "верно", "ок", "ok", "ага", "угу"]
 Negatives = ["нет", "неа"]
-Done = ["готовый", "весь"]
+Done = ["готовый", "весь", "граф"]
 Error = ["Извините, я не совсем поняла Вас. Пожалуйста, повторите Ваш ответ ещё раз."]
 
 ShortcutsYes = ["Да"]
@@ -76,4 +77,4 @@ States = {sql.STATE_GREETING: StateGreeting, sql.STATE_NAME: StateName, sql.STAT
           sql.STATE_GRAPH_NAME: StateGraphName, sql.STATE_GRAPH_DESCRIPTION: StateGraphDescription,
           sql.STATE_BASIC_SELECTION: StateBasicSelection, sql.STATE_ACTORS: StateActors,
           sql.STATE_USE_CASES: StateUseCases, sql.STATE_RELATIONS: StateRelations, sql.STATE_SELECTION: StateSelection,
-          sql.STATE_EDIT_SELECTION: StateEditSelection, }
+          sql.STATE_EDIT_SELECTION: StateEditSelection, sql.STATE_GRAPH_DONE: StateGraphDone}

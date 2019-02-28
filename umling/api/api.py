@@ -28,6 +28,7 @@ import logging
 from umling.api import sql
 from umling.api import input
 from umling.api import database
+from umling.api import graph
 
 
 class Message:
@@ -94,14 +95,19 @@ def write_graph_data(user_id, query, state):
     data = parse_list(query)
     if state is sql.STATE_ACTORS:
         for actor in data:
-            sql.make_actor(user_id, actor.strip(), "description")
+            sql.make_actor(user_id, actor.strip(), "description")  # TODO empty field
     elif state is sql.STATE_USE_CASES:
         for use_case in data:
-            sql.make_use_case(user_id, use_case.strip(), "description")
+            sql.make_use_case(user_id, use_case.strip(), "description")  # TODO empty field
     elif state is sql.STATE_RELATIONS:
         for relation in data:
             rel = relation.strip().split('-')
-            sql.make_relation("name", )
+            graph = sql.get_current_graph(user_id)
+            actor = sql.get_actor_by_name(graph, rel[0].strip())
+            use_case = sql.get_use_case_by_name(graph, rel[1].strip())
+            if actor is None or use_case is None:
+                return None
+            sql.make_relation("name", actor, use_case)  # TODO empty field
 
 
 def get_graph_nodes(user_id):
@@ -142,7 +148,7 @@ def handle_state(user_id, state, query):
         if query is not None:
             name = sql.get_user(user_id).query
             sql.make_graph(user_id, name, query)
-            sql.set_query(user_id, "")
+            sql.set_query(user_id, "")  # TODO empty field
             state = sql.STATE_BASIC_SELECTION
     elif state == sql.STATE_BASIC_SELECTION:
         state = state_by_action(query, state)
@@ -167,13 +173,17 @@ def handle_state(user_id, state, query):
                 write_graph_data(user_id, query, state)
         pass
     elif state == sql.STATE_SELECTION:
-        if check_done(query) is True:
-            #state = sql.STATE_GRAPH_DONE
-            pass
-        else:
-            state = state_by_action(query, state)
-            if state is sql.STATE_RELATIONS:
-                args = get_graph_nodes(user_id)
+        if query is not None:
+            if check_done(query) is True:
+                state = sql.STATE_GRAPH_DONE
+            else:
+                state = state_by_action(query, state)
+                if state is sql.STATE_RELATIONS:
+                    args = get_graph_nodes(user_id)
+    elif state == sql.STATE_GRAPH_DONE:
+        graph.generate(user_id)
+        sql.set_state(user_id, sql.STATE_GRAPH_NAME)
+        pass
 
     db_state = database.States[state]
     if db_state.requiresConfirmation:

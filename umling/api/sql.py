@@ -36,6 +36,7 @@ STATE_USE_CASES = 7
 STATE_RELATIONS = 8
 STATE_SELECTION = 9
 STATE_EDIT_SELECTION = 10
+STATE_GRAPH_DONE = 11
 
 
 class UmlingModel(Model):
@@ -47,6 +48,8 @@ class User(UmlingModel):
     user_id = CharField()
     username = CharField(null=True)
     state = SmallIntegerField()
+    next_state = SmallIntegerField(null=True)
+    query = CharField(null=True)
     confirmation = BooleanField()
 
 
@@ -121,9 +124,21 @@ def set_state(user_id, state):
     user.save()
 
 
+def set_next_state(user_id, next_state):
+    user = User.get(User.user_id == user_id)
+    user.next_state = next_state
+    user.save()
+
+
 def set_name(user_id, name):
     user = User.get(User.user_id == user_id)
     user.username = name
+    user.save()
+
+
+def set_query(user_id, query):
+    user = User.get(User.user_id == user_id)
+    user.query = query
     user.save()
 
 
@@ -165,11 +180,11 @@ def get_use_cases(graph_pk):
 
 
 def get_actor_by_name(graph_pk, name):
-    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_ACTOR, Node.name == name)
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_ACTOR, Node.name == name).limit(1)[0]
 
 
 def get_use_case_by_name(graph_pk, name):
-    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_USE_CASE, Node.name == name)
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_USE_CASE, Node.name == name).limit(1)[0]
 
 
 def get_relations(graph_pk):
