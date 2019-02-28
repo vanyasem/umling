@@ -28,11 +28,14 @@ LEVEL_USE_CASE = 1
 STATE_GREETING = 0
 STATE_NAME = 1
 STATE_CONFIRM_NAME = 2
-STATE_BASIC_SELECTION = 3
-STATE_ACTORS = 4
-STATE_USE_CASES = 5
-STATE_RELATIONS = 6
-STATE_EDIT_SELECTION = 7
+STATE_GRAPH_NAME = 3
+STATE_GRAPH_DESCRIPTION = 4
+STATE_BASIC_SELECTION = 5
+STATE_ACTORS = 6
+STATE_USE_CASES = 7
+STATE_RELATIONS = 8
+STATE_ANOTHER = 9
+STATE_EDIT_SELECTION = 10
 
 
 class UmlingModel(Model):
@@ -89,6 +92,12 @@ def populate_test_data():
 def create_user(user_id):
     user = User(user_id=user_id, state=STATE_GREETING, confirmation=False, save_query=False)
     user.save()
+
+
+def make_graph(user_id, name, description):
+    user = get_user(user_id)
+    graph = Graph(user=user, name=name, description=description)
+    graph.save()
 
 
 def set_state(user_id, state):

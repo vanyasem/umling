@@ -22,6 +22,7 @@ This is the API (main logic) of umling.
 """
 
 import random
+import re
 import logging
 
 from umling.api import sql
@@ -81,6 +82,18 @@ def load_query_if_saved(user_id, query):
     return query
 
 
+def parse_list(query):
+    delimiters = ';|,'
+    return re.split(delimiters, query)
+
+
+def write_graph_data(query, state):
+    list = parse_list(query)
+    if state is sql.STATE_ACTORS:
+        #sql.
+        pass
+
+
 def handle_state(user_id, state, query):
     logging.debug("{}, current state: {}".format(user_id, state))
     result = None
@@ -102,19 +115,34 @@ def handle_state(user_id, state, query):
         args = (sql.get_user(user_id).username, )
         if result is True:
             sql.set_confirmation(user_id, False)
-            state = sql.STATE_BASIC_SELECTION
+            state = sql.STATE_GRAPH_NAME
         elif result is False:
             state = sql.STATE_NAME
+    elif state == sql.STATE_GRAPH_NAME:
+        sql.set_query(user_id, query)
+        state = sql.STATE_GRAPH_DESCRIPTION
+    elif state == sql.STATE_GRAPH_DESCRIPTION:
+        name = sql.get_user(user_id).query
+        sql.make_graph(user_id, name, query)
+        sql.set_query(user_id, "")
+        state = sql.STATE_BASIC_SELECTION
     elif state == sql.STATE_BASIC_SELECTION:
         args = (sql.get_user(user_id).username, )
         query = load_query_if_saved(user_id, query)
         if sql.get_user(user_id).save_query is True:
             sql.set_query(user_id, query)
             state = state_by_action(query, state)
+            if state is not sql.STATE_BASIC_SELECTION:
+                sql.set_query(user_id, "")
         else:
             sql.set_save_query(user_id, True)
     elif state == sql.STATE_ACTORS:
-        pass
+        query = load_query_if_saved(user_id, query)
+        if sql.get_user(user_id).save_query is True:
+            sql.set_query(user_id, query)
+            write_graph_data(query, state)
+        else:
+            sql.set_save_query(user_id, True)
     elif state == sql.STATE_USE_CASES:
         pass
 
