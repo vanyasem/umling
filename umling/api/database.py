@@ -46,10 +46,12 @@ def random_confirmation_shortcut(is_positive):
 
 Positives = ["да", "конечно", "подтвердить", "согласный", "верно", "ок", "ok", "ага", "угу"]
 Negatives = ["нет", "неа"]
+Done = ["готовый", "весь"]
 Error = ["Извините, я не совсем поняла Вас. Пожалуйста, повторите Ваш ответ ещё раз."]
 
 ShortcutsYes = ["Да"]
 ShortcutsNo = ["Нет"]
+ShortcutsDone = ["Готово"]
 
 Actions = ["Группы действующих лиц", "Варианты использования"]
 ActionActors = ["группа", "действующий", "лицо"]
@@ -61,9 +63,9 @@ StateConfirmName = State(["Ваше имя: {}, верно?"], True, random_conf
 StateGraphName = State(["Очень приятно, {}! Как бы Вы хотели назвать Ваш новый граф?"], False, None)
 StateGraphDescription = State(["А теперь придумайте описание для Вашего графа"], False, None)
 StateBasicSelection = State(["С чего бы вы хотели начать заполнение диаграммы?"], False, Actions)
-StateActors = State(["Какие лица участвуют в процессе? Например: ученик, учитель, директор"], False, None)
-StateUseCases = State(["Какие действия можно совершить? Например: выполнить задание, добавить в систему ученика"], False, None)
-StateRelations = State(["Определите область доступа для каждого участника процесса. Например: ученик может выполнить задание"], False, None)
+StateActors = State(["Какие лица участвуют в процессе? Например: ученик, учитель, директор"], False, ShortcutsDone)
+StateUseCases = State(["Какие действия можно совершить? Например: выполнить задание, добавить в систему ученика"], False, ShortcutsDone)
+StateRelations = State(["Определите область доступа для каждого участника процесса. Например: ученик может выполнить задание"], False, ShortcutsDone)
 StateAnother = State(["StateAnother"], False, None)
 StateEditSelection = State([""], False, Actions)
 

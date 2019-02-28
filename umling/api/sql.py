@@ -100,6 +100,23 @@ def make_graph(user_id, name, description):
     graph.save()
 
 
+def make_actor(user_id, name, description):
+    graph = get_current_graph(user_id)
+    actor = Node(graph=graph, level=LEVEL_ACTOR, name=name, description=description)
+    actor.save()
+
+
+def make_use_case(user_id, name, description):
+    graph = get_current_graph(user_id)
+    use_case = Node(graph=graph, level=LEVEL_USE_CASE, name=name, description=description)
+    use_case.save()
+
+
+#def make_relationship(name, actor, use_case):
+#    relationship = Relationship(start_node=actor, end_node=use_case, name=name, direction=False)
+#    relationship.save()
+
+
 def set_state(user_id, state):
     user = User.get(User.user_id == user_id)
     user.state = state

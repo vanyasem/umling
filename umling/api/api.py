@@ -65,6 +65,14 @@ def check_positive(query):
     return None
 
 
+def check_done(query):
+    normalized_query = input.process_input(query)
+    for item in normalized_query:
+        if item in database.Done:
+            return True
+    return False
+
+
 def state_by_action(query, state):
     normalized_query = input.process_input(query)
     for item in normalized_query:
@@ -76,22 +84,24 @@ def state_by_action(query, state):
 
 
 def load_query_if_saved(user_id, query):
-    if sql.get_user(user_id).query is not None \
-            and query is None:
+    if sql.get_user(user_id).query is not None and query is None:
         return sql.get_user(user_id).query
     return query
 
 
 def parse_list(query):
     delimiters = ';|,'
-    return re.split(delimiters, query)
+    return re.split(delimiters, query.strip())
 
 
-def write_graph_data(query, state):
-    list = parse_list(query)
+def write_graph_data(user_id, query, state):
+    data = parse_list(query)
     if state is sql.STATE_ACTORS:
-        #sql.
-        pass
+        for actor in data:
+            sql.make_actor(user_id, actor.strip(), "description")
+    elif state is sql.STATE_USE_CASES:
+        for use_case in data:
+            sql.make_use_case(user_id, use_case.strip(), "description")
 
 
 def handle_state(user_id, state, query):
@@ -119,13 +129,15 @@ def handle_state(user_id, state, query):
         elif result is False:
             state = sql.STATE_NAME
     elif state == sql.STATE_GRAPH_NAME:
-        sql.set_query(user_id, query)
-        state = sql.STATE_GRAPH_DESCRIPTION
+        if query is not None:
+            sql.set_query(user_id, query)
+            state = sql.STATE_GRAPH_DESCRIPTION
     elif state == sql.STATE_GRAPH_DESCRIPTION:
-        name = sql.get_user(user_id).query
-        sql.make_graph(user_id, name, query)
-        sql.set_query(user_id, "")
-        state = sql.STATE_BASIC_SELECTION
+        if query is not None:
+            name = sql.get_user(user_id).query
+            sql.make_graph(user_id, name, query)
+            sql.set_query(user_id, "")
+            state = sql.STATE_BASIC_SELECTION
     elif state == sql.STATE_BASIC_SELECTION:
         args = (sql.get_user(user_id).username, )
         query = load_query_if_saved(user_id, query)
@@ -137,13 +149,17 @@ def handle_state(user_id, state, query):
         else:
             sql.set_save_query(user_id, True)
     elif state == sql.STATE_ACTORS:
-        query = load_query_if_saved(user_id, query)
-        if sql.get_user(user_id).save_query is True:
-            sql.set_query(user_id, query)
-            write_graph_data(query, state)
-        else:
-            sql.set_save_query(user_id, True)
+        if query is not None:
+            if check_done(query) is True:
+                state = sql.STATE_BASIC_SELECTION
+            else:
+                write_graph_data(user_id, query, state)
     elif state == sql.STATE_USE_CASES:
+        if query is not None:
+            if check_done(query) is True:
+                state = sql.STATE_BASIC_SELECTION
+            else:
+                write_graph_data(user_id, query, state)
         pass
 
     db_state = database.States[state]
