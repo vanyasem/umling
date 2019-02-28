@@ -60,7 +60,7 @@ def py_process_message(msg) -> None:
     global Browser
     result = api.handle_query(config.CEF_USER_ID, msg)
     if result.isFinal:
-        Browser.ExecuteFunction("picture", "graphs" + os.sep + "graph.png", result.message, result.shortcuts[0])
+        Browser.ExecuteFunction("picture", "graphs" + os.sep + "1.png", result.message, result.shortcuts[0])
     else:
         Browser.ExecuteFunction("message", result.message, result.shortcuts)
 

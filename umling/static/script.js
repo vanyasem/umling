@@ -122,7 +122,7 @@ function message(text, shortcuts) {
   }, 1000 + (Math.random() * 20) * 100);
 }
 
-function picture(path, title, desc) {
+function picture(path, title, desc) { // todo add save https://stackoverflow.com/questions/30694433/how-to-give-browser-save-image-as-option-to-button
   if ($('.message-input').val() != '') {
     return false;
   }

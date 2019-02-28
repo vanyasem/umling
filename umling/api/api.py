@@ -174,7 +174,7 @@ def handle_state(user_id, state, query):
             if check_done(query) is True:
                 state = sql.STATE_SELECTION
             else:
-                write_graph_data(user_id, query, state)
+                write_graph_data(user_id, query, state)  # TODO crashes here if a typo is made
         pass
     elif state == sql.STATE_SELECTION:
         if query is not None:
