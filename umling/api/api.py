@@ -85,12 +85,6 @@ def state_by_action(query, state):
     return state
 
 
-def load_query_if_saved(user_id, query):
-    if sql.get_user(user_id).query is not None and query is None:
-        return sql.get_user(user_id).query
-    return query
-
-
 def parse_list(query):
     delimiters = ';|,'
     return re.split(delimiters, query.strip())
@@ -104,6 +98,10 @@ def write_graph_data(user_id, query, state):
     elif state is sql.STATE_USE_CASES:
         for use_case in data:
             sql.make_use_case(user_id, use_case.strip(), "description")
+    elif state is sql.STATE_RELATIONS:
+        for relation in data:
+            rel = relation.strip().split('-')
+            sql.make_relation("name", )
 
 
 def get_graph_nodes(user_id):
@@ -147,14 +145,7 @@ def handle_state(user_id, state, query):
             sql.set_query(user_id, "")
             state = sql.STATE_BASIC_SELECTION
     elif state == sql.STATE_BASIC_SELECTION:
-        query = load_query_if_saved(user_id, query)  # TODO probably needs to be removed - serves no purpose ?
-        if sql.get_user(user_id).save_query is True:
-            sql.set_query(user_id, query)
-            state = state_by_action(query, state)
-            if state is not sql.STATE_BASIC_SELECTION:
-                sql.set_query(user_id, "")
-        else:
-            sql.set_save_query(user_id, True)
+        state = state_by_action(query, state)
     elif state == sql.STATE_ACTORS:
         if query is not None:
             if check_done(query) is True:
@@ -176,20 +167,13 @@ def handle_state(user_id, state, query):
                 write_graph_data(user_id, query, state)
         pass
     elif state == sql.STATE_SELECTION:
-        query = load_query_if_saved(user_id, query)  # TODO probably needs to be removed - serves no purpose ?
         if check_done(query) is True:
             #state = sql.STATE_GRAPH_DONE
             pass
         else:
-            if sql.get_user(user_id).save_query is True:
-                sql.set_query(user_id, query)
-                state = state_by_action(query, state)
-                if state is not sql.STATE_SELECTION:
-                    if state is sql.STATE_RELATIONS:
-                        args = get_graph_nodes(user_id)
-                    sql.set_query(user_id, "")
-            else:
-                sql.set_save_query(user_id, True)
+            state = state_by_action(query, state)
+            if state is sql.STATE_RELATIONS:
+                args = get_graph_nodes(user_id)
 
     db_state = database.States[state]
     if db_state.requiresConfirmation:

@@ -47,8 +47,6 @@ class User(UmlingModel):
     user_id = CharField()
     username = CharField(null=True)
     state = SmallIntegerField()
-    query = CharField(null=True)
-    save_query = BooleanField()
     confirmation = BooleanField()
 
 
@@ -73,7 +71,7 @@ class Relationship(UmlingModel):
 
 
 def populate_test_data():
-    test_user = User(user_id="Test user", username="Tester", state=STATE_GREETING, confirmation=False, save_query=False)
+    test_user = User(user_id="Test user", username="Tester", state=STATE_GREETING, confirmation=False)
     test_user.save()
 
     test_graph = Graph(user=test_user, name="Test graph", description="This graph is intended for testing")
@@ -90,7 +88,7 @@ def populate_test_data():
 
 
 def create_user(user_id):
-    user = User(user_id=user_id, state=STATE_GREETING, confirmation=False, save_query=False)
+    user = User(user_id=user_id, state=STATE_GREETING, confirmation=False)
     user.save()
 
 
@@ -126,18 +124,6 @@ def set_state(user_id, state):
 def set_name(user_id, name):
     user = User.get(User.user_id == user_id)
     user.username = name
-    user.save()
-
-
-def set_query(user_id, query):
-    user = User.get(User.user_id == user_id)
-    user.query = query
-    user.save()
-
-
-def set_save_query(user_id, save_query):
-    user = User.get(User.user_id == user_id)
-    user.save_query = save_query
     user.save()
 
 
