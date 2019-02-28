@@ -21,19 +21,44 @@
 This is the API (main logic) of umling.
 """
 
+import random
+
 from umling.api import sql
-from umling.api import graph
+from umling.api import input
+from umling.api import database
+
+
+class Message:
+    isFinal = False
+    message = None
+    shortcuts = None
+
+    def __init__(self, is_final, message, shortcuts):
+        self.isFinal = is_final
+        self.message = message
+        self.shortcuts = shortcuts
+
+
+def state_to_message(state):
+    response = random.choice(state.responses)
+    return Message(False, response, state.shortcuts)
 
 
 def handle_query(user_id, query):
-    if query is None:
-        return "Привет! Меня зовут umling"
-    else:
-        return "hi " + user_id + " " + query
+    user = sql.get_user(user_id)
+    if user is None:
+        sql.create_user(user_id)
+        user = sql.get_user(user_id)
+
+    state = database.States[user.state]
+
+    if state.requiresConfirmation:
+        pass
+
+    return state_to_message(state)
     pass
 
 
 def init():
     sql.init()
-    # graph.main()
     pass

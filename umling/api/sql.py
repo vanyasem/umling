@@ -25,10 +25,11 @@ db = SqliteDatabase(config.DATA_PATH + 'umling.db')
 LEVEL_ACTOR = 0
 LEVEL_USE_CASE = 1
 
-STATE_NONE = 0
-STATE_ACTORS = 1
-STATE_USE_CASES = 2
-STATE_RELATIONS = 3
+STATE_GREETING = 0
+STATE_NAME = 1
+STATE_CONFIRM_NAME = 2
+STATE_BASIC_SELECTION = 3
+STATE_EDIT_SELECTION = 4
 
 
 class UmlingModel(Model):
@@ -38,6 +39,7 @@ class UmlingModel(Model):
 
 class User(UmlingModel):
     user_id = CharField()
+    username = CharField(null=True)
     state = SmallIntegerField()
 
 
@@ -62,7 +64,7 @@ class Relationship(UmlingModel):
 
 
 def populate_test_data():
-    test_user = User(user_id="Test user", state=STATE_NONE)
+    test_user = User(user_id="Test user", state=STATE_GREETING)
     test_user.save()
 
     test_graph = Graph(user=test_user, name="Test graph", description="This graph is intended for testing")
@@ -78,9 +80,22 @@ def populate_test_data():
     test_relationship.save()
 
 
+def create_user(user_id):
+    user = User(user_id=user_id, state=STATE_GREETING)
+    user.save()
+
+
 def get_user_pk(user_id):
     user = User.get(User.user_id == user_id)
     return user.get_id()
+
+
+def get_user(user_id):
+    user = None
+    try:
+        user = User.get(User.user_id == user_id)
+    finally:
+        return user
 
 
 def get_current_graph(user_id):
@@ -103,5 +118,3 @@ def init():
 
     db.connect()
     db.create_tables([User, Graph, Node, Relationship])
-
-    populate_test_data()
