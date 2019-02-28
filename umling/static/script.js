@@ -92,6 +92,12 @@ $(window).on('keydown', function(e) {
   }
 })
 
+function processChip(text) {
+  $('.message-input').val(text);
+  insertMessage();
+  $('.chip').remove();
+}
+
 function message(text, shortcuts) {
   if ($('.message-input').val() != '') {
     return false;
@@ -105,7 +111,7 @@ function message(text, shortcuts) {
     if(shortcuts != null) {
       chips += '<br>';
       shortcuts.forEach(function(item, i, shortcuts) {
-        chips += '<div onClick="alert(\'Test\');" style="margin-top: 5px" class="chip teal darken-1 blue-grey-text text-lighten-4">' + item + '</div>';
+        chips += '<div onClick="processChip(\'' + item + '\')" style="margin-top: 5px" class="chip teal darken-1 blue-grey-text text-lighten-4">' + item + '</div>';
       });
     }
     $('<div class="message new"><figure class="avatar"><img src="favicon.ico" /></figure>' + text
