@@ -40,10 +40,10 @@ class Message:
         self.shortcuts = shortcuts
 
 
-def state_to_message(state):
+def state_to_message(state, *args):
     db_state = database.States[state]
     response = random.choice(db_state.responses)
-    return Message(False, response, db_state.shortcuts)
+    return Message(False, response.format(*args), db_state.shortcuts)
 
 
 def get_or_create_user(user_id):
@@ -56,7 +56,6 @@ def get_or_create_user(user_id):
 
 def check_positive(query):
     normalized_query = input.process_input(query)
-    print(normalized_query)
     for item in normalized_query:
         if item in database.Positives:
             return True
@@ -68,16 +67,28 @@ def check_positive(query):
 def handle_state(user_id, state, query):
     logging.debug("{}, current state: {}".format(user_id, state))
     result = None
-    if sql.get_confirmation(user_id):
-        print(query)
+    if sql.get_user(user_id).confirmation:
         result = check_positive(str(query))
         pass
 
+    args = ()
     if state == sql.STATE_GREETING:
         if result is True:
             sql.set_confirmation(user_id, False)
             state = sql.STATE_NAME
     elif state == sql.STATE_NAME:
+        if query is not None:
+            sql.set_name(user_id, query)
+        state = sql.STATE_CONFIRM_NAME
+        args = (sql.get_user(user_id).username, )
+        pass
+    elif state == sql.STATE_CONFIRM_NAME:
+        args = (sql.get_user(user_id).username, )
+        if result is True:
+            sql.set_confirmation(user_id, False)
+            state = sql.STATE_BASIC_SELECTION
+        elif result is False:
+            state = sql.STATE_NAME
         pass
 
     db_state = database.States[state]
@@ -87,7 +98,7 @@ def handle_state(user_id, state, query):
 
     logging.debug("{}, switching state to: {}".format(user_id, state))
     sql.set_state(user_id, state)
-    return state_to_message(state)
+    return state_to_message(state, *args)
 
 
 def handle_query(user_id, query):

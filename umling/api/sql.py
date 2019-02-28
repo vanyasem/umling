@@ -98,9 +98,10 @@ def set_confirmation(user_id, mode):
     user.save()
 
 
-def get_confirmation(user_id):
+def set_name(user_id, name):
     user = User.get(User.user_id == user_id)
-    return user.confirmation
+    user.username = name
+    user.save()
 
 
 def get_user_pk(user_id):
