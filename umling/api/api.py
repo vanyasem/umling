@@ -80,6 +80,8 @@ def state_by_action(query, state):
             return sql.STATE_ACTORS
         elif item in database.ActionUseCases:
             return sql.STATE_USE_CASES
+        elif item in database.ActionRelations:
+            return sql.STATE_RELATIONS
     return state
 
 
@@ -104,12 +106,18 @@ def write_graph_data(user_id, query, state):
             sql.make_use_case(user_id, use_case.strip(), "description")
 
 
+def get_graph_nodes(user_id):
+    graph = sql.get_current_graph(user_id)
+    actors = sql.get_actors(graph.get_id())
+    use_cases = sql.get_use_cases(graph.get_id())
+    return ([actor.name for actor in actors], [use_case.name for use_case in use_cases])
+
+
 def handle_state(user_id, state, query):
     logging.debug("{}, current state: {}".format(user_id, state))
     result = None
     if sql.get_user(user_id).confirmation:
         result = check_positive(str(query))
-        pass
 
     args = ()
     if state == sql.STATE_GREETING:
@@ -139,8 +147,7 @@ def handle_state(user_id, state, query):
             sql.set_query(user_id, "")
             state = sql.STATE_BASIC_SELECTION
     elif state == sql.STATE_BASIC_SELECTION:
-        args = (sql.get_user(user_id).username, )
-        query = load_query_if_saved(user_id, query)
+        query = load_query_if_saved(user_id, query)  # TODO probably needs to be removed - serves no purpose ?
         if sql.get_user(user_id).save_query is True:
             sql.set_query(user_id, query)
             state = state_by_action(query, state)
@@ -151,16 +158,38 @@ def handle_state(user_id, state, query):
     elif state == sql.STATE_ACTORS:
         if query is not None:
             if check_done(query) is True:
-                state = sql.STATE_BASIC_SELECTION
+                state = sql.STATE_SELECTION
             else:
                 write_graph_data(user_id, query, state)
     elif state == sql.STATE_USE_CASES:
         if query is not None:
             if check_done(query) is True:
-                state = sql.STATE_BASIC_SELECTION
+                state = sql.STATE_SELECTION
+            else:
+                write_graph_data(user_id, query, state)
+    elif state == sql.STATE_RELATIONS:
+        args = get_graph_nodes(user_id)
+        if query is not None:
+            if check_done(query) is True:
+                state = sql.STATE_SELECTION
             else:
                 write_graph_data(user_id, query, state)
         pass
+    elif state == sql.STATE_SELECTION:
+        query = load_query_if_saved(user_id, query)  # TODO probably needs to be removed - serves no purpose ?
+        if check_done(query) is True:
+            #state = sql.STATE_GRAPH_DONE
+            pass
+        else:
+            if sql.get_user(user_id).save_query is True:
+                sql.set_query(user_id, query)
+                state = state_by_action(query, state)
+                if state is not sql.STATE_SELECTION:
+                    if state is sql.STATE_RELATIONS:
+                        args = get_graph_nodes(user_id)
+                    sql.set_query(user_id, "")
+            else:
+                sql.set_save_query(user_id, True)
 
     db_state = database.States[state]
     if db_state.requiresConfirmation:

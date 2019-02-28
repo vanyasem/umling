@@ -34,7 +34,7 @@ STATE_BASIC_SELECTION = 5
 STATE_ACTORS = 6
 STATE_USE_CASES = 7
 STATE_RELATIONS = 8
-STATE_ANOTHER = 9
+STATE_SELECTION = 9
 STATE_EDIT_SELECTION = 10
 
 
@@ -112,9 +112,9 @@ def make_use_case(user_id, name, description):
     use_case.save()
 
 
-#def make_relationship(name, actor, use_case):
-#    relationship = Relationship(start_node=actor, end_node=use_case, name=name, direction=False)
-#    relationship.save()
+def make_relation(name, actor, use_case):
+    relationship = Relationship(start_node=actor, end_node=use_case, name=name, direction=False)
+    relationship.save()
 
 
 def set_state(user_id, state):
@@ -168,6 +168,22 @@ def get_current_graph(user_id):
 
 def get_graph_nodes(graph_pk):
     return Node.select().where(Node.graph == graph_pk)
+
+
+def get_actors(graph_pk):
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_ACTOR)
+
+
+def get_use_cases(graph_pk):
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_USE_CASE)
+
+
+def get_actor_by_name(graph_pk, name):
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_ACTOR, Node.name == name)
+
+
+def get_use_case_by_name(graph_pk, name):
+    return Node.select().where(Node.graph == graph_pk, Node.level == LEVEL_USE_CASE, Node.name == name)
 
 
 def get_relations(graph_pk):

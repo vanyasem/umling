@@ -53,24 +53,27 @@ ShortcutsYes = ["Да"]
 ShortcutsNo = ["Нет"]
 ShortcutsDone = ["Готово"]
 
-Actions = ["Группы действующих лиц", "Варианты использования"]
+ActionsQuick = ["Группы действующих лиц", "Варианты использования"]
+Actions = ActionsQuick + ["Область доступа участников", "Завершить граф"]
 ActionActors = ["группа", "действующий", "лицо"]
 ActionUseCases = ["вариант", "использование"]
+ActionRelations = ["область", "доступ", "участник"]
 
 StateGreeting = State(["Здравствуйте! Меня зовут umling, я помогу Вам создать use-case UML диаграмму по Вашему продукту. Вы готовы начать?"], True, random_confirmation_shortcut(True))
 StateName = State(["Для начала, как я могу к Вам обращаться?"], False, None)
 StateConfirmName = State(["Ваше имя: {}, верно?"], True, random_confirmation_shortcut(None))
 StateGraphName = State(["Очень приятно, {}! Как бы Вы хотели назвать Ваш новый граф?"], False, None)
 StateGraphDescription = State(["А теперь придумайте описание для Вашего графа"], False, None)
-StateBasicSelection = State(["С чего бы вы хотели начать заполнение диаграммы?"], False, Actions)
+StateBasicSelection = State(["С чего бы вы хотели начать заполнение диаграммы?"], False, ActionsQuick)
 StateActors = State(["Какие лица участвуют в процессе? Например: ученик, учитель, директор"], False, ShortcutsDone)
 StateUseCases = State(["Какие действия можно совершить? Например: выполнить задание, добавить в систему ученика"], False, ShortcutsDone)
-StateRelations = State(["Определите область доступа для каждого участника процесса. Например: ученик может выполнить задание"], False, ShortcutsDone)
-StateAnother = State(["StateAnother"], False, None)
-StateEditSelection = State([""], False, Actions)
+StateRelations = State(["Определите область доступа для каждого участника процесса. Например: ученик - выполнить задание. Участники: {}. Доступные действия: {}"], False, ShortcutsDone)
+StateSelection = State(["Что бы Вы хотели задать следующим шагом?"], False, Actions)
+StateEditSelection = State(["StateEditSelection"], False, Actions)  # TODO not implemented
+StateGraphDone = State(["StateGraphDone"], False, Actions)  # TODO not implemented
 
 States = {sql.STATE_GREETING: StateGreeting, sql.STATE_NAME: StateName, sql.STATE_CONFIRM_NAME: StateConfirmName,
           sql.STATE_GRAPH_NAME: StateGraphName, sql.STATE_GRAPH_DESCRIPTION: StateGraphDescription,
           sql.STATE_BASIC_SELECTION: StateBasicSelection, sql.STATE_ACTORS: StateActors,
-          sql.STATE_USE_CASES: StateUseCases, sql.STATE_RELATIONS: StateRelations, sql.STATE_ANOTHER: StateAnother,
+          sql.STATE_USE_CASES: StateUseCases, sql.STATE_RELATIONS: StateRelations, sql.STATE_SELECTION: StateSelection,
           sql.STATE_EDIT_SELECTION: StateEditSelection, }
